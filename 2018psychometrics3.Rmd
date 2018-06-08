@@ -1,0 +1,63 @@
+---
+title: "2018春心理科学統計III"
+author: '@asarin'
+date: "2018年6月9日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r initialize, include=FALSE}
+#使うライブラリはここに羅列する
+library(tidyverse)
+
+#使うデータをすべて読み込み
+dat =read.table("2018psychometrics3.csv", header=TRUE)
+
+```
+
+## 講義内容
+
+- 「心理科学基礎統計」「心理科学統計I/II」などで学んだ統計解析手法を，データ解析に活用する方法を，フリーの統計分析プログラム「HAD」を用いて実践的に学ぶ  
+- データ解析の結果をレポート・論文で正しく記述するためのルールを学ぶ  
+- 卒業論文で，実験・調査などを通じて数量的なデータを収集し，実証的な研究をする学生を主たる対象として想定した授業を進める  
+- 心理統計に関しては記述統計学と推測統計学（統計的仮説検定）の知識，パソコン操作に関しては情報処理基礎の知識を前提とした講義を行う  
+- 授業時間外にも自主的に予習・復習を行う事が強く求められる  
+
+- 本ドキュメントは，こうした講義内容を「R」で再現するものである  
+
+## 分析用データ
+
+- [質問紙調査票](https://www.dropbox.com/s/jffr6jjrgygf81x/2018%E5%BF%83%E7%90%86%E7%A7%91%E5%AD%A6%E7%B5%B1%E8%A8%88III%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB%E3%83%87%E3%83%BC%E3%82%BF%E8%B3%AA%E5%95%8F%E7%B4%99.pdf?dl=0)  
+- [調査票プレビュー](https://kgpsysci.au1.qualtrics.com/jfe/preview/SV_3pF9vc4UbnixB7T?Q_CHL=preview)  
+
+### 使用した尺度  
+
+- IMC  
+    - 質問紙調査の回答者が「努力の最小限化（Satisficing）をしていないかどうかを確認する設問．様々な方法があるが，IMCは，教示文をきちんと読んでいることを確認する目的で実施するもの
+- 個人属性（性別・年齢）  
+- 成人の愛着スタイル  
+    - ヘイザンとシェイバー(1987)によって作成された，乳幼児の愛着パターンにもとづく3類型（安定・回避・アンビバレント）によって個人の愛着スタイルを判別する尺度  
+- 孤独感  
+    - ラッセルら(1978,1980)が作成したUCLA孤独感尺度を諸井(1985,1987,1991)が日本語に翻訳したもの．1～4の4件法  
+- 主観的幸福感  
+    - 本研究で独自に作成したもの．「楽しい」「満足な」「幸福な」「ゆううつな」「悲しい」の4項目．1（まったく当てはまらない）から100（ぴったり当てはまる）の101件法  
+- 性格の5因子尺度  
+    - 和田(1996)による特性形容詞を用いた尺度から5因子×6項目ずつ抽出したもの．1～7の7件法  
+
+### データの中身を最初の数件表示させる関数 summary  
+```{r cars}
+mean(dat$BigFive1)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
