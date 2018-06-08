@@ -9,13 +9,14 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r initialize, include=FALSE}
+```{r initialize, include=FALSE, message=FALSE}
+#↑ include（実行結果）とmessage（警告）を表示させない
+
 #使うライブラリはここに羅列する
 library(tidyverse)
 
-#使うデータをすべて読み込み
-dat =read.table("2018psychometrics3.csv", header=TRUE)
-
+#使うデータを読み込み
+dat <- read.csv("2018psychometrics3.csv", header=TRUE)
 ```
 
 ## 講義内容
@@ -47,9 +48,9 @@ dat =read.table("2018psychometrics3.csv", header=TRUE)
 - 性格の5因子尺度  
     - 和田(1996)による特性形容詞を用いた尺度から5因子×6項目ずつ抽出したもの．1～7の7件法  
 
-### データの中身を最初の数件表示させる関数 summary  
+### データに含まれる変数の最大値，最小値，平均値，中央値を表示させる関数 summary  
 ```{r cars}
-mean(dat$BigFive1)
+summary(dat)
 ```
 
 ## Including Plots
