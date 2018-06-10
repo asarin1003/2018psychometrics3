@@ -1,0 +1,13 @@
+"0","describe(dat2$孤独感得点,dat2$愛着スタイル) 
+"
+"2","Error in describe(dat2$孤独感得点, dat2$愛着スタイル) : 
+  could not find function ""describe""
+"
+"2","In addition: "
+"2","Warning message:
+"
+"2","In strsplit(code, ""\n"", fixed = TRUE) :"
+"2","
+ "
+"2"," input string 1 is invalid in this locale
+"

@@ -1,0 +1,13 @@
+"0","scatter <- ggplot(dat2, aes(x=主観的幸福感得点, y=孤独感得点)) +
+scatter <- ggplot(geom_point())
+"
+"2","Error in ggplot(geom_point()) : could not find function ""ggplot""
+"
+"2","In addition: "
+"2","Warning message:
+"
+"2","In strsplit(code, ""\n"", fixed = TRUE) :"
+"2","
+ "
+"2"," input string 1 is invalid in this locale
+"

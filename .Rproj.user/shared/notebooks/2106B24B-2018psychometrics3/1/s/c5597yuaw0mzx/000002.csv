@@ -1,0 +1,9 @@
+"0","subdat <- list()"
+"0","subdat$data <- as.vector(cbind(dat$taste1,dat$taste2,dat$taste3))"
+"0","subdat$factor <- factor(c(rep(""1"",4),rep(""2"",4),rep(""3"",4)))"
+"0","subdat$subject <- factor(c(rep(1:4),rep(1:4),rep(1:4)))"
+"0","subdat <- na.omit(subdat)"
+"0","aov(data ~ factor+subject,subdat)"
+"2","Error in model.frame.default(formula = data ~ factor + subject, data = subdat,  : 
+  object is not a matrix
+"
