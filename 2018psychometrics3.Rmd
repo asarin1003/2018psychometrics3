@@ -1,8 +1,14 @@
 ---
 title: "2018春心理科学統計III　Rによる分析チュートリアル"
 author: 'MIURA Asako (Kwansei Gakuin Univ / Osaka Univ)'
-date: "2018年6月9日"
-output: html_document
+date: "`r Sys.Date()`"
+output: 
+ html_document:
+  md_extensions: -ascii_identifiers
+  toc: true
+  toc_depth: 4
+  toc_float: true
+  number_section: true
 ---
 
 ```{r setup, include=FALSE}
@@ -17,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - 心理統計に関しては記述統計学と推測統計学（統計的仮説検定）の知識，パソコン操作に関しては情報処理基礎の知識を前提とした講義を行う  
 - 授業時間外にも自主的に予習・復習を行う事が強く求められる  
 
-本ドキュメントは，こうした講義内容を「R」で再現するものである.HADは分析内容をRコードとして出力するオプションがある．データシート「HAD2R」から「HAR2Rをオンにする」にチェックを入れて，分析を実行すればよい．このチュートリアルでは一部にこのオプションを活用している.  
+本ドキュメントは，こうした講義内容を「R」で再現するものである.HADは分析内容（すべてではない）をRコードとして出力するオプションがある．データシート「HAD2R」から「HAR2Rをオンにする」にチェックを入れて，分析を実行すればよい．このチュートリアルでは一部にこのオプションを活用している.  
 
 ---
 
@@ -27,7 +33,7 @@ Rはフリーの統計解析向けのプログラミング言語で，すべて�
 
 > 清水先生談：[本格的に統計分析を学習・利用したい人は、Rなどのフリープログラムがオススメです。](http://norimune.net/696)  
 
-本チュートリアルではRやパッケージのインストール方法など，基本的な環境整備については解説しないが，数多くの参考情報（書籍，Webサイト（例えば[ここ](http://www.okadajp.org/RWiki/?R%20%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)など）をすぐに見つけることができるだろう．また，Rによる統計解析をスムーズに実行・管理可能な統合環境として[RStudio](https://www.rstudio.com/)がある．これも無償版で十分活用できるので，是非導入を勧めたい．  
+本チュートリアルではRやパッケージのインストール方法など，基本的な環境整備については解説しないが，数多くの参考情報（書籍，Webサイト（例えば[ここ](http://www.okadajp.org/RWiki/?R%20%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)など）をすぐに見つけることができるだろう．また，Rによる統計解析をスムーズに実行・管理可能な統合環境として[RStudio](https://www.rstudio.com/)がある．これも無償版で十分活用できるので，是非導入を勧めたい．  p
 
 本チュートリアルは，RStudioでR markdown(Rmd)パッケージによって作成された．種々の参考資料を活用しているが，特に[高橋康介『再現可能性のすゝめ―RStudioによるデータ解析とレポート作成―』（共立出版）](http://www.kyoritsu-pub.co.jp/bookdetail/9784320112438)がもっとも有用だった．こうしたチュートリアルを書く着想を与えてくれた同書と高橋さんに心から感謝する．  
 
@@ -48,14 +54,12 @@ dat4 <- read.csv("anova_sample2.csv", header=TRUE, fileEncoding="utf-8")
 
 ---
 
-# 分析用データ
+# サンプルデータに関する情報
 
 基本は毎年度使用している以下の質問紙調査データ  
 
 - [質問紙調査票](https://www.dropbox.com/s/jffr6jjrgygf81x/2018%E5%BF%83%E7%90%86%E7%A7%91%E5%AD%A6%E7%B5%B1%E8%A8%88III%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB%E3%83%87%E3%83%BC%E3%82%BF%E8%B3%AA%E5%95%8F%E7%B4%99.pdf?dl=0)  
 - [調査票プレビュー](https://kgpsysci.au1.qualtrics.com/jfe/preview/SV_3pF9vc4UbnixB7T?Q_CHL=preview)  
-
-上記ファイル読み込みコマンドにも明記しているとおり，Rmdファイルもデータファイルも文字コードを**```UTF-8```**にしている．Excelでデータを開く時は「ファイル」→「開く」ではなく「データ」→「テキストファイル」を用いる必要がある．受講生が手元データで実施する場合は**```, fileEncoding="utf-8"を削除```**すればよい．
 
 ## 使用した尺度  
 
@@ -73,11 +77,26 @@ dat4 <- read.csv("anova_sample2.csv", header=TRUE, fileEncoding="utf-8")
 
 ---
 
+# 分析
+
 ## データの概要を知る  
 
-最初に使用するデータは**```dat1; ファイル名は 2018psychometrics3.csv```** である．  
+最初に使用するデータは**```dat; ファイル名は 2018psychometrics3.csv```** である．
 
-なお，Rでは値にラベルをつけにくいので，名義尺度で測定された変数（性別と愛着スタイル）はデータそものを文字列データに変換した（性別は1男性・2女性，愛着スタイルは1安定・2回避・3アンビバレント）．
+以下のスクリプトで，`dat`データセットの冒頭5行を表示してみよう．
+
+```{r, eval=FALSE}
+head(dat, 5)
+knitr::kable(head(dat, 5))
+```
+```{r, echo=FALSE}
+knitr::kable(head(dat, 5))
+```
+
+
+上記したデータファイル読み込みコマンドにも明記しているとおり，Rmdファイルもデータファイルも文字コードを**```UTF-8```**にしている．Excelでデータを開く時は「ファイル」→「開く」ではなく「データ」→「テキストファイル」を用いる必要がある．なお，Windowsの標準文字コードはShift-JISである．  
+
+Rでは値にラベルをつけにくいので，名義尺度で測定された変数（性別と愛着スタイル）はデータそものを文字列データに変換した（性別は1男性・2女性，愛着スタイルは1安定・2回避・3アンビバレント）．
   
 データ分析に着手する前に，まず全体にざっと目を通した上で，基本的な統計量や度数分布を見て，特徴を把握しておくことが重要である．それぞれどの関数を用いればよいかを把握しておこう．これらの関数はすべてRをインストールすれば必ず入っている  
 
@@ -95,7 +114,7 @@ hist(dat$主観的幸福感1) #ヒストグラムの出力
 
 データに欠損値が含まれる場合に，それを除外して統計量を算出する場合がほとんどだろう．今回講義で用いたデータには欠損値は含まれていないが，含まれる場合は，各コードに ```**na.rm=TRUE**``` というオプションをつけて実行する必要がある時もある（それぞれの関数のデフォルト設定に依存する）．  
   
-また，**```心理統計でよく用いられる分析のための関数をまとめたパッケージ[psych](https://cran.r-project.org/web/packages/psych/psych.pdf)```**を活用するのもよいだろう．例えば上記の基本統計量や散布度など代表的な記述統計量を算出するdescribe関数や，それを群ごとに算出するdescribeBy関数，ヒストグラムに確率密度曲線と正規分布曲線を重ねて描画するmulti.hist関数などがある．  
+また，**心理統計でよく用いられる分析のための関数をまとめたパッケージ[psych](https://cran.r-project.org/web/packages/psych/psych.pdf)**を活用するのもよいだろう．例えば上記の基本統計量や散布度など代表的な記述統計量を算出するdescribe関数や，それを群ごとに算出するdescribeBy関数，ヒストグラムに確率密度曲線と正規分布曲線を重ねて描画するmulti.hist関数などがある．  
 
 describeの出力は，左から順に，列番号(var)，ケース数(n)，平均値(mean)，標準偏差(sd)，中央値(median)，トリムされた平均値(trimmed)，MAD:median absolute deviation(mad)，最小値(min)，最大値(max)，レンジ(range)，歪度(skew)，尖度(kurtosis)，標準誤差(se)である．  
 
@@ -314,7 +333,7 @@ cohen.d(dat2$孤独感得点~dat2$性別) #効果量dの算出
 
 検定結果がHADの出力と同じであることはスライド94で確認できる．効果量は微妙に異なるようである．  
 
-### グラフを描く
+#### グラフを描く
 
 ```{r bargraph1, warning=FALSE}
 bargraph1 <- ggplot(dat2, aes(x=性別, y=孤独感得点, fill=性別)) #XY軸を構成する変数の指定(fillは塗り分けする変数の指定)
@@ -357,7 +376,7 @@ t.test(dat3$anx2017, dat3$anx2018, paired=TRUE) #対応のある2群の平均値
 cohen.d(dat3$anx2017, dat3$anx2018) #効果量dの算出
 ```
 
-### グラフを描く
+#### グラフを描く
 
 **折れ線グラフをggplotで描きたいが，今のところ不器用かつ不完全な方法である**  
 
@@ -392,7 +411,7 @@ lineplot1 #折れ線グラフの出力
 
 分散分析(ANOVA) 3つ以上の平均値を比較するときに用いる統計手法である．独立変数（要因）が，従属変数（結果）の散らばり具合に影響することが，データ（平均値）間に差をもたらしている程度を検討する．すべての平均値が異なる群から得られる参加者間要因，すべての平均値が同じ群から得られる参加者内要因があり，2要因以上の組み合わせであれば両者が混合することもある．分散分析の原理は講義スライドや心理科学統計IIの資料を見て理解していただきたい．  
 
-###参加者間1要因分散分析  
+### 参加者間1要因分散分析  
 
 まず，愛着スタイルを独立変数，孤独感得点を従属変数とする参加者間1要因分散分析を行う．2群だった性別とは異なり，愛着スタイルは3群あるので平均値を比較する際には分散分析を用いる．分散分析を実行する関数はいくつかあるが，ここではanova関数を用いた．多重比較はHADのデフォルトのHolm法で行う．
 
@@ -406,7 +425,7 @@ pairwise.t.test (dat2$孤独感得点, dat2$愛着スタイル, p.adjust.method=
 
 愛着スタイルの主効果は有意であり，多重比較の結果から，安定型と回避型/アンビバレント型の間に差がある（回避型とアンビバレント型の間に差はない）ことが示された．HADの出力と一致していることをスライド165で確認しよう．  
 
-### グラフを描く
+#### グラフを描く
 
 ```{r bargraph2, warning=FALSE}
 bargraph2 <- ggplot(dat2, aes(x=愛着スタイル, y=孤独感得点, fill=愛着スタイル)) #XY軸を構成する変数の指定(fillは塗り分けする変数の指定)
@@ -427,16 +446,16 @@ bargraph2 #棒グラフの出力
 dat4 #データの中身を表示
 describe(dat4[,2:4]) #おいしさの評価の基本統計量
 
-subdat <- list() #リストの作成というおまじない
-subdat$data <- as.vector(cbind(dat4$taste1,dat4$taste2,dat4$taste3)) #おいしさの評価（ベクトル）
-subdat$factor <- factor(c(rep("A食堂",4),rep("カフェB",4),rep("喫茶C",4))) #店の種類（文字列）
-subdat$subject <- factor(c(rep(1:4),rep(1:4),rep(1:4))) #評価者（文字列）
+subdat4 <- list() #リストの作成というおまじない
+subdat4$data <- as.vector(cbind(dat4$taste1,dat4$taste2,dat4$taste3)) #おいしさの評価（ベクトル）
+subdat4$factor <- factor(c(rep("A食堂",4),rep("カフェB",4),rep("喫茶C",4))) #店の種類（文字列）
+subdat4$subject <- factor(c(rep(1:4),rep(1:4),rep(1:4))) #評価者（文字列）
 # subdat <- na.omit(subdat) 欠損値がある行を除く場合に必要
-aov(data ~ factor+subject,subdat) #分散分析
-pairwise.t.test(subdat$data,subdat$factor,p.adj = "holm",paired = TRUE) #Holm法による多重比較
+aov(data ~ factor+subject,subdat4) #分散分析（独立変数は店の種類と評価者（個人差））
+pairwise.t.test(subdat4$data,subdat4$factor,p.adj = "holm",paired = TRUE) #Holm法による多重比較
 ```
 
-### グラフを描く
+#### グラフを描く
 
 ```{r bargraph3, warning=FALSE}
 #店の種類とそれぞれのおいしさ評価の平均値から成る新しいデータフレームshop.diffを作成．あとは対応のある平均値の差の検定の折れ線グラフと同じ要領
@@ -449,7 +468,7 @@ shop.diff #新しいデータフレームの中身の確認
 
 #棒グラフの描画
 bargraph3 <- ggplot(shop.diff, aes(x = shop, y = taste_mean, fill = shop))
-bargraph3 <- bargraph3 + geom_bar(stat = "identity") #集計値を用いる時はstat="identity"を指定する必要あり）
+bargraph3 <- bargraph3 + geom_bar(stat = "identity",alpha=0.5) #棒グラフの値として既に集計されている値を用いる時はstat="identity"を指定する必要あり）
 bargraph3 <- bargraph3+xlab("店の種類") #X軸ラベル
 bargraph3 <- bargraph3+ylab("おいしさ評価")  #Y軸ラベル
 bargraph3 <- bargraph3+coord_cartesian(ylim = c(0, 10)) #Y軸の値範囲指定
@@ -480,8 +499,19 @@ not yet
 not yet
 ```
 
+---
+
 ##回帰分析
 
+回帰分析は，2つ以上の観測変数について，1つの変数を結果，その他の変数を原因として，それらの因果関係を説明しようとする分析である．原因系の変数＝独立変数(x)と結果系の変数＝従属変数(y)に関してデータを採り，xにもとづいてyを予測する式y=f(x)を作成する．想定される原因（独立変数）が1つの場合を単回帰分析，複数の場合を重回帰分析とよぶ．  
+
+ここではごくシンプルなモデルで分析実習をする，サンプルデータを用いて，孤独感得点を従属変数，性別・年齢・性格の5因子の各得点を独立変数とする重回帰分析をおこなってみよう．
+
+```{r multireg1, warning=FALSE}
+subdat2 <- subset(dat2, select = c(性別,年齢,孤独感得点,誠実性得点,調和性得点,神経症傾向得点,開放性得点,外向性得点)) #必要な変数だけを取り出す
+multireg1 <- lm(孤独感得点~性別+年齢+誠実性得点+調和性得点+神経症傾向得点+開放性得点+外向性得点, subdat2) #重回帰分析をして結果をmultireg1に渡す
+summary(multireg1) #結果の出力
 ```
-not yet
-```
+
+**切片だけ値が違うのはなぜ…**
+**VIFを出力**
